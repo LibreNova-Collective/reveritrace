@@ -30,6 +30,14 @@ def release_files():
         yield name, path
 
 
+def write_archive_entry(archive, name, data):
+    """Write a regular file with platform-independent ZIP metadata."""
+    info = zipfile.ZipInfo(name, date_time=(1980, 1, 1, 0, 0, 0))
+    info.create_system = 3
+    info.external_attr = 0o100644 << 16
+    archive.writestr(info, data, compress_type=zipfile.ZIP_DEFLATED)
+
+
 def build(config=None, *, output=None):
     cfg=json.loads(Path(config).read_text(encoding='utf-8')) if config else None
     if config and not isinstance(cfg,dict): raise ValueError('Configuration must be an object')
@@ -84,9 +92,9 @@ def build(config=None, *, output=None):
          zipfile.ZipFile(plugin_zip, 'w', zipfile.ZIP_DEFLATED) as package:
         for name, path in files:
             data = manifest_bytes if name == 'plugin/plugin.json' else path.read_bytes()
-            source_zip.writestr(name, data)
+            write_archive_entry(source_zip, name, data)
             if name.startswith('plugin/'):
-                package.writestr(name.removeprefix('plugin/'), data)
+                write_archive_entry(package, name.removeprefix('plugin/'), data)
     name=html.escape(cfg['publisher']) if cfg else 'Publisher identity pending verification'
     effective=html.escape(cfg['effective_date']) if cfg else 'Pending approval'
     contact=f'<a href="{html.escape(support,quote=True)}">Official support channel</a>' if cfg else 'Support channel pending publisher setup.'

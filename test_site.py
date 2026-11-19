@@ -38,9 +38,11 @@ class Site(unittest.TestCase):
   with zipfile.ZipFile(site / 'ReveriTrace-source.zip') as archive:
    self.assertEqual(archive.namelist(), approved)
    self.assertIsNone(archive.testzip())
+   self.assertTrue(all(entry.date_time == (1980, 1, 1, 0, 0, 0) for entry in archive.infolist()))
   with zipfile.ZipFile(site / 'ReveriTrace-plugin.zip') as archive:
    self.assertEqual(archive.namelist(), [name.removeprefix('plugin/') for name in approved if name.startswith('plugin/')])
    self.assertIsNone(archive.testzip())
+   self.assertTrue(all(entry.date_time == (1980, 1, 1, 0, 0, 0) for entry in archive.infolist()))
    manifest = json.loads(archive.read('plugin.json'))
    interface = manifest['extensions']['com.openai']['interface']
    self.assertNotIn('.app.json', archive.namelist())
