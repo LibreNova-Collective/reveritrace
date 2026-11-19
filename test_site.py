@@ -88,4 +88,39 @@ class Site(unittest.TestCase):
    }))
    with self.assertRaisesRegex(ValueError, 'must confirm'):
     build(config, output=Path(d) / 'output')
+ def test_approved_release_matches_site_and_archives(self):
+  # Synthetic metadata exercises rendering without deploying or contacting GitHub.
+  base = 'https://librenova-collective.github.io/reveritrace'
+  support = 'https://github.com/LibreNova-Collective/reveritrace/issues'
+  with tempfile.TemporaryDirectory() as d:
+   root = Path(d)
+   config = root / 'config.json'
+   config.write_text(json.dumps({
+    'publisher': 'Synthetic Publisher & Team', 'base_url': base + '/',
+    'support_url': support, 'effective_date': '2026-01-01',
+    'publisher_verified': True, 'policies_approved': True, 'rights_confirmed': True,
+    'countries': ['ES', 'JP'],
+   }))
+   output = root / 'output'
+   build(config, output=output)
+   self.assertFalse(json.loads((output / 'build-status.json').read_text())['preview'])
+   site = output / 'site'
+   with zipfile.ZipFile(site / 'ReveriTrace-plugin.zip') as package, zipfile.ZipFile(
+    site / 'ReveriTrace-source.zip'
+   ) as source:
+    manifest_bytes = package.read('plugin.json')
+    self.assertEqual(source.read('plugin/plugin.json'), manifest_bytes)
+    self.assertNotIn('config.json', source.namelist())
+   listing = json.loads(manifest_bytes)['extensions']['com.openai']
+   self.assertEqual(listing['interface']['developerName'], 'Synthetic Publisher & Team')
+   self.assertEqual(listing['publication']['countries'], ['ES', 'JP'])
+   for key, filename in PAGES.items():
+    self.assertEqual(listing['interface'][key], f'{base}/{filename}')
+    page = (site / filename).read_text()
+    self.assertNotIn('PREVIEW', page)
+    self.assertIn('Synthetic Publisher &amp; Team', page)
+    if filename in {'privacy.html', 'terms.html'}:
+     self.assertIn('2026-01-01', page)
+    if filename != 'index.html':
+     self.assertIn(support, page)
 if __name__=='__main__':unittest.main()
