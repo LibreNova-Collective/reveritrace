@@ -40,7 +40,7 @@
         "commerce": false
       },
       "publication": {
-        "release_notes": "Security and license-hardening: canonical YouTube URLs, import quality persistence, conservative offline model admission and fallback, expanded synthetic tests. AGPL-3.0-only; no bundled model weights or dependency binaries.",
+        "release_notes": "Security and license-hardening: canonical YouTube URLs, import quality persistence, conservative offline model admission and fallback, expanded synthetic tests. AGPL-3.0-only; no bundled model weights or dependency binaries. Release staging uses an explicit file inventory and deterministic archive metadata.",
         "translations": {
           "es-ES": {
             "shortDescription": "Recupera vídeos que recuerdas",

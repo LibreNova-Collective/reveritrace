@@ -2,29 +2,70 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 """Build a review preview or publisher-approved static release; no network calls."""
 import argparse, html, json, shutil, zipfile, re, hashlib
+from datetime import date
 from pathlib import Path
 from urllib.parse import urlsplit
 ROOT=Path(__file__).resolve().parent
 PAGES={'websiteURL':'index.html','supportURL':'support.html','privacyPolicyURL':'privacy.html','termsOfServiceURL':'terms.html'}
+SITE_FILES = {*PAGES.values(), '.nojekyll', 'icon.png', 'LICENSE.txt', 'style.css',
+              'ReveriTrace-source.zip', 'ReveriTrace-plugin.zip'}
 def https(value):
+    if any(character.isspace() or ord(character) < 32 for character in value) or '\\' in value:
+        raise ValueError('Invalid character in URL')
     u=urlsplit(value)
     if u.scheme!='https' or not u.hostname or u.username or u.password or u.query or u.fragment or len(value)>900:
         raise ValueError('Use a real HTTPS URL without credentials, query or fragment')
+    if u.hostname in {'example.com', 'example.net', 'example.org', 'localhost'} or u.hostname.endswith(('.invalid', '.example', '.test')):
+        raise ValueError('Placeholder URLs are not supported')
     return value.rstrip('/')
-def build(config=None):
-    cfg=json.loads(Path(config).read_text()) if config else None
+def release_files():
+    """Yield approved release inputs. Ignore all other workspace files."""
+    for name in (ROOT / 'release-files.txt').read_text(encoding='utf-8').splitlines():
+        relative = Path(name)
+        if relative.is_absolute() or '..' in relative.parts or relative.as_posix() != name:
+            raise ValueError('Invalid release inventory path')
+        path = ROOT / relative
+        if not path.is_file() or any((ROOT / parent).is_symlink() for parent in (relative, *relative.parents)):
+            raise ValueError(f'Missing or symbolic release input: {name}')
+        yield name, path
+
+
+def build(config=None, *, output=None):
+    cfg=json.loads(Path(config).read_text(encoding='utf-8')) if config else None
     if config and not isinstance(cfg,dict): raise ValueError('Configuration must be an object')
     if cfg is not None:
         for key in ('publisher','base_url','support_url','effective_date'):
             if not isinstance(cfg.get(key),str) or not cfg[key].strip(): raise ValueError('Missing '+key)
         if len(cfg['publisher'])>80 or not re.fullmatch(r'\d{4}-\d{2}-\d{2}',cfg['effective_date']): raise ValueError('Invalid publisher or date')
-        if not cfg.get('publisher_verified') or not cfg.get('policies_approved') or not cfg.get('rights_confirmed'): raise ValueError('Publisher must confirm identity, policy and rights before build')
+        date.fromisoformat(cfg['effective_date'])
+        approvals = ('publisher_verified', 'policies_approved', 'rights_confirmed')
+        if any(cfg.get(key) is not True for key in approvals):
+            raise ValueError('Publisher must confirm identity, policy and rights before build')
+        countries = cfg.get('countries')
+        all_countries = cfg.get('all_available_countries', False)
+        if not isinstance(all_countries, bool) or (
+            countries is not None and (
+                all_countries or not isinstance(countries, list) or not countries
+                or any(not isinstance(code, str) or not re.fullmatch(r'[A-Z]{2}', code) for code in countries)
+                or len(countries) != len(set(countries))
+            )
+        ):
+            raise ValueError('Use either all available countries or a nonempty list of unique country codes')
         base=https(cfg['base_url']); support=https(cfg['support_url'])
-        if 'example.com' in base or 'example.com' in support: raise ValueError('Placeholder URLs are not supported')
-    out=ROOT/'dist'; out.mkdir(exist_ok=True)
-    site=out/'site'; site.mkdir(exist_ok=True)
-    shutil.copy2(ROOT/'plugin/assets/icon.png',site/'icon.png'); shutil.copy2(ROOT/'plugin/LICENSE',site/'LICENSE.txt')
-    shutil.copy2(ROOT/'style.css',site/'style.css')
+    files = list(release_files())
+    out = Path(output) if output is not None else ROOT / 'dist'
+    out.mkdir(parents=True, exist_ok=True)
+    site = out / 'site'
+    if site.is_symlink():
+        raise ValueError('Output site must not be a symbolic link')
+    site.mkdir(exist_ok=True)
+    if any(path.name not in SITE_FILES or path.is_symlink() or not path.is_file()
+           for path in site.iterdir()) or (out / 'build-status.json').is_symlink():
+        raise ValueError('Use a clean output directory')
+
+    inputs = dict(files)
+    for name, target in (('plugin/assets/icon.png', 'icon.png'), ('plugin/LICENSE', 'LICENSE.txt'), ('style.css', 'style.css')):
+        shutil.copyfile(inputs[name], site / target)
     (site/'.nojekyll').touch()
     manifest=json.loads((ROOT/'plugin/plugin.json').read_text())
     interface=manifest['extensions']['com.openai']['interface']
@@ -35,25 +76,17 @@ def build(config=None):
         elif cfg.get('countries'):
             if not all(re.fullmatch(r'[A-Z]{2}',c) for c in cfg['countries']): raise ValueError('Invalid country codes')
             manifest['extensions']['com.openai']['publication']['countries']=cfg['countries']
-    # Include original corresponding source and the local website generator, not dependencies or user files.
-    source=site/'ReveriTrace-source.zip'
-    with zipfile.ZipFile(source,'w',zipfile.ZIP_DEFLATED) as z:
-        for f in sorted((ROOT/'plugin').rglob('*')):
-            if f.is_file() and '__pycache__' not in f.parts and f.suffix!='.pyc':
-                name=f.relative_to(ROOT/'plugin').as_posix()
-                if name=='plugin.json': z.writestr('plugin/'+name,json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-                else: z.write(f,'plugin/'+name)
-        for n in ('build_site.py','style.css','README.md','test_site.py'):
-            z.write(ROOT/n,n)
-        for f in (ROOT/'kit/docs').glob('*'):
-            if f.is_file(): z.write(f,'kit/docs/'+f.name)
-    plugin_zip=site/'ReveriTrace-plugin.zip'
-    with zipfile.ZipFile(plugin_zip,'w',zipfile.ZIP_DEFLATED) as z:
-        for f in sorted((ROOT/'plugin').rglob('*')):
-            if f.is_file() and '__pycache__' not in f.parts and f.suffix!='.pyc':
-                n=f.relative_to(ROOT/'plugin').as_posix()
-                if n=='plugin.json':z.writestr(n,json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
-                else:z.write(f,n)
+    source = site / 'ReveriTrace-source.zip'
+    plugin_zip = site / 'ReveriTrace-plugin.zip'
+    manifest_bytes = (json.dumps(manifest, ensure_ascii=False, indent=2) + '\n').encode()
+    # Fixed ZIP entry metadata and ordered explicit inputs make builds reproducible.
+    with zipfile.ZipFile(source, 'w', zipfile.ZIP_DEFLATED) as source_zip, \
+         zipfile.ZipFile(plugin_zip, 'w', zipfile.ZIP_DEFLATED) as package:
+        for name, path in files:
+            data = manifest_bytes if name == 'plugin/plugin.json' else path.read_bytes()
+            source_zip.writestr(name, data)
+            if name.startswith('plugin/'):
+                package.writestr(name.removeprefix('plugin/'), data)
     name=html.escape(cfg['publisher']) if cfg else 'Publisher identity pending verification'
     effective=html.escape(cfg['effective_date']) if cfg else 'Pending approval'
     contact=f'<a href="{html.escape(support,quote=True)}">Official support channel</a>' if cfg else 'Support channel pending publisher setup.'
@@ -72,4 +105,4 @@ def build(config=None):
     (out/'build-status.json').write_text(json.dumps(summary,indent=2)+'\n')
     print(json.dumps(summary,indent=2))
 if __name__=='__main__':
-    p=argparse.ArgumentParser();p.add_argument('--approved-config');a=p.parse_args();build(a.approved_config)
+    p=argparse.ArgumentParser();p.add_argument('--approved-config');p.add_argument('--output', type=Path);a=p.parse_args();build(a.approved_config, output=a.output)

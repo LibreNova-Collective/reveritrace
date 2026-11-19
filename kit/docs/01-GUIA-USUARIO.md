@@ -33,3 +33,9 @@ On Windows use quoted real paths or `py -3`. Create the DB parent folder first. 
 
 ## Coverage and privacy
 Counts mean events recorded, not total listening time. A link normalized to youtube.com may not distinguish the original Music surface. Searches and plays are separate. History is stored in SQLite outside the package. Device access controls matter; SQLite bundles no encryption at rest. A cloud ChatGPT session or connector is not the same as offline device processing. Use the host privacy controls; do not assume files survive chats or are deleted automatically when a local file is removed. No publisher backend is included.
+
+## Control del historial y soporte
+
+Prueba el flujo con un archivo sintético antes de usar tu exportación. Conserva los ZIP originales y protege el índice SQLite y sus copias. Si ejecutas la skill en un servicio alojado, consulta cómo trata y conserva los archivos que adjuntas. Para retirar datos locales, cierra el programa y elimina el índice, sus archivos auxiliares y las copias que ya no necesites. En solicitudes públicas de soporte utiliza datos sintéticos.
+
+Las vistas previas se pueden abrir desde `dist/site` después de ejecutar `python build_site.py` en el código fuente. Los botones de descarga ofrecen la skill y su código correspondiente.

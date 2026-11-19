@@ -27,3 +27,12 @@ Google Data Portability API provides restricted `dataportability.myactivity.yout
 
 ## Software licensing
 Original code: AGPL-3.0-only. Consult the supplied complete license and licensing notice for distribution, network access, and third-party dependencies. Do not apply the license to private user history.
+
+## Mantenimiento de la distribución por futuros agentes
+
+- Trabajar con archivos sintéticos en un directorio temporal y un índice SQLite separado. Ejecutar las dos suites del README; la de historial cubre importación, búsqueda, sincronización incremental, rotación y admisión de modelos.
+- Editar `build_site.py` para modificar el sitio oficial. Las páginas de `kit/site/` son material histórico del paquete importado. Compilar y revisar las cuatro páginas servidas por HTTP local. Verificar el propósito, la navegación, las descargas y la política de contenido.
+- Si cambia la distribución, revisar `release-files.txt` línea por línea. Cada cambio ahí debe corresponder a un archivo deliberadamente público. Los archivos no listados se excluyen de ambos ZIP. Mantener el generador, las pruebas y las licencias en el ZIP de código correspondiente. Usar una salida limpia para Pages.
+- Verificar `git fsck --full --strict`, los metadatos de autor y committer, y ejecutar `gitleaks git --redact --no-banner .`. Revisar también imágenes, binarios, nombres de archivo y texto libre. Los escáneres solo detectan patrones conocidos.
+- Si cambian versiones de dependencias, auditar el entorno opcional exacto por plataforma con `pip-audit`. Inspeccionar licencias y avisos en paquetes y binarios nativos antes de redistribuirlos. Mantener pesos, entornos, entradas y bases de datos fuera del repositorio y los ZIP.
+- Conservar evidencia de comandos, resultados, revisiones y sumas de los ZIP. Evitar nombres de cuenta, credenciales y rutas de usuarios al registrar evidencia. Seguir PUBLISHING.md para cualquier cambio de visibilidad, despliegue o envío.

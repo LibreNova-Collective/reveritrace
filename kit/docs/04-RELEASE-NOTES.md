@@ -16,3 +16,7 @@
 
 ### v1.0.1
 36 synthetic tests passed. External model manifest gate and safe loading flags tested without actual weights. No bundled model weights, credentials or third-party binary dependencies. Public publisher, live URLs, portal scans and attestations remain pending.
+
+## Preparación de publicación de 1.0.1
+
+Se conserva la versión declarada. La distribución usa un inventario explícito, archivos ZIP con metadatos fijos y validación estricta de aprobaciones. Se incorporan pruebas de exclusión de archivos ajenos, enlaces simbólicos, salidas contaminadas y estructura del plugin. CI y Pages se preparan para el repositorio público, con ejecución privada local durante la revisión.

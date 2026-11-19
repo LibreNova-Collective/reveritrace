@@ -1,0 +1,42 @@
+name: Publish approved ReveriTrace site
+on: workflow_dispatch
+permissions: {}
+concurrency:
+  group: pages
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main' && vars.PAGES_RELEASE_CONFIG != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Build approved site
+        env:
+          RELEASE_CONFIG: ${{ vars.PAGES_RELEASE_CONFIG }}
+        run: |
+          python3 -m unittest -v test_site
+          config="$(mktemp)"
+          trap 'rm -f "$config"' EXIT
+          printf '%s' "$RELEASE_CONFIG" > "$config"
+          python3 build_site.py --approved-config "$config" --output pages-release
+      - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
+        with:
+          path: pages-release/site
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4

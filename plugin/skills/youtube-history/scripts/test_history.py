@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 import argparse, json, tempfile, unittest, zipfile
+from importlib.util import find_spec
 from pathlib import Path
+from unittest.mock import patch
 import history
 
 class HistoryTests(unittest.TestCase):
@@ -29,12 +31,24 @@ class HistoryTests(unittest.TestCase):
     def test_japanese_normalization(self):
         self.assertEqual(history.normalize('スペイン語字幕 ガ'), 'スペイン語字幕 ガ')
         self.assertIn('英語字幕',history.clues('subtitulos ingles',True))
+    @unittest.skipUnless(find_spec("sklearn"), "optional scikit-learn runtime unavailable")
     def test_semantic_cross_language(self):
         from semantic import LocalSemantic
         docs=['寄生獣 エンディング スペイン語字幕','アニメ 英語字幕 主題歌','football news','料理 レシピ','dark outlaw country mix']
         for q,expected in [('ending parasyte subtitulos español',0),('anime japanese english subtitles',1),('dark country sombrio',4)]:
             scores=LocalSemantic().rank(q,docs); self.assertEqual(scores.index(max(scores)),expected)
+    @unittest.skipUnless(find_spec("sklearn"), "optional scikit-learn runtime unavailable")
     def test_semantic_search(self):
         history.ingest(self.db,[self.z]);a=argparse.Namespace(start='2024-06-01',end='2024-06-30',tz='UTC',kind='watch',platform='all',query='country sombrío',expand=True,model=None,semantic='local',limit=10)
         r=history.search(self.db,a); self.assertEqual(r[0]['video_id'],'abcdefghijk'); self.assertEqual(r[0]['semantic_engine'],'local-lsa-multilingual-v2')
+    def test_semantic_falls_back_without_optional_runtime(self):
+        history.ingest(self.db, [self.z])
+        args = argparse.Namespace(start='2024-06-01', end='2024-06-30', tz='UTC',
+                                  kind='watch', platform='all', query='country sombrío',
+                                  expand=True, model=None, semantic='local', limit=10)
+        with patch('semantic.LocalSemantic.rank', side_effect=ModuleNotFoundError('sklearn')):
+            results = history.search(self.db, args)
+        self.assertEqual(results[0]['video_id'], 'abcdefghijk')
+        self.assertNotIn('semantic_engine', results[0])
+
 if __name__=='__main__':unittest.main()
