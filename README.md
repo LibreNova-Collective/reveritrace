@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="plugin/assets/icon.png" width="128" height="128" alt="Icono de ReveriTrace">
+</p>
+
 # ReveriTrace 1.0.1
 
 ReveriTrace busca vídeos y pistas de YouTube Music en archivos de historial que el usuario tiene autorización para tratar. Usa SQLite en un entorno de ejecución compatible y admite filtros de fechas, repeticiones y pistas en español, inglés y japonés. El código original se distribuye bajo AGPL-3.0-only. Los pesos de modelos y las dependencias externas se instalan por separado.
