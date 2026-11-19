@@ -6,7 +6,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   build:
-    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main' && vars.PAGES_RELEASE_CONFIG != ''
+    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
@@ -20,9 +20,12 @@ jobs:
           RELEASE_CONFIG: ${{ vars.PAGES_RELEASE_CONFIG }}
         run: |
           python3 -m unittest -v test_site
-          config="$(mktemp)"
-          trap 'rm -f "$config"' EXIT
-          printf '%s' "$RELEASE_CONFIG" > "$config"
+          config=pages-release.json
+          if [ -n "$RELEASE_CONFIG" ]; then
+            config="$(mktemp)"
+            trap 'rm -f "$config"' EXIT
+            printf '%s' "$RELEASE_CONFIG" > "$config"
+          fi
           python3 build_site.py --approved-config "$config" --output pages-release
       - uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3
         with:

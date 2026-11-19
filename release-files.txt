@@ -40,3 +40,4 @@ build_site.py
 release-files.txt
 style.css
 test_site.py
+pages-release.json
