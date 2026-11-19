@@ -1,0 +1,2 @@
+# Archive comparison (read-only)
+`python scripts/verify_rotation.py --new NEW.zip --old OLD.zip` compares explicit complete, history-only archive sets and returns whether the new file contains all old event fingerprints. It does not authenticate cloud provenance, delete files or modify history. For multipart archives pass all parts. Reject corrupt, empty, skipped, non-history or overlapping sets. Keep any older archive containing unique events. The account owner may dispose of verified redundant copies manually; never delete account activity.

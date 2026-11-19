@@ -1,0 +1,54 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "reveritrace",
+  "version": "1.0.1",
+  "description": "Rediscover watched videos and music from your own YouTube history exports using multilingual search and date filters.",
+  "keywords": [
+    "history",
+    "video",
+    "music",
+    "search",
+    "takeout"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "ReveriTrace",
+        "shortDescription": "Find videos you remember",
+        "longDescription": "Rediscover previously watched YouTube videos and listened-to YouTube Music tracks using your own authorized history files. Search by dates, approximate titles, channels, repeated activity and descriptive clues in English, Spanish and Japanese. Local indexing and semantic matching require a compatible execution environment; Google Takeout exports or user-authorized sources are required. No direct Google OAuth, live history API, or background service is included. Independent tool, not affiliated with YouTube or Google. Optional external local models require explicit provenance and license review; no remote model APIs are included.",
+        "category": "Productivity",
+        "capabilities": [
+          "Interactive"
+        ],
+        "defaultPrompt": [
+          "Find a video I watched last month from my history export.",
+          "Find songs I played repeatedly during a date range.",
+          "Search my history for a Japanese song with English subtitles."
+        ],
+        "logo": "assets/icon.png",
+        "composerIcon": "assets/icon.png"
+      },
+      "review": {
+        "prompts": [
+          "Import my YouTube history ZIP and identify the date range.",
+          "Find a video I watched several times last month.",
+          "Find a Japanese song with English subtitles from my history.",
+          "Compare these two exports and tell me whether the older one contains unique events.",
+          "Which records are explicitly identified as YouTube Music?",
+          "What can I do if I have no history export yet?"
+        ],
+        "commerce": false
+      },
+      "publication": {
+        "release_notes": "Security and license-hardening: canonical YouTube URLs, import quality persistence, conservative offline model admission and fallback, expanded synthetic tests. AGPL-3.0-only; no bundled model weights or dependency binaries.",
+        "translations": {
+          "es-ES": {
+            "shortDescription": "Recupera vídeos que recuerdas",
+            "longDescription": "Busca vídeos de YouTube y canciones de YouTube Music en tus propios archivos de historial autorizados. Filtra por fechas, repeticiones y pistas multilingües. Requiere una exportación o fuente autorizada y un entorno compatible para indexar localmente. No incluye OAuth directo ni sincronización permanente."
+          }
+        }
+      }
+    }
+  },
+  "license": "AGPL-3.0-only"
+}

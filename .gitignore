@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.venv/
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.env
+.env*
+*.pem
+*.key
+approved-config.json
+Takeout/
+exports/
+models/
+dist/

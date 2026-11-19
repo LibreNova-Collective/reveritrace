@@ -1,0 +1,20 @@
+# Public listing & submission handoff
+Status: candidate package, NOT submitted, NOT approved, NOT yet ready for complete public review.
+
+Name: ReveriTrace (11 chars). Slug reveritrace. Version 1.0.1. Category Productivity. English subtitle: Find videos you remember. English description and Spanish translation in manifest. Original 512×512 PNG icon, deep navy / teal, no YouTube branding. Exact-name searches of public web and ChatGPT plugin directory found no obvious exact conflict; directory search is not exhaustive and no trademark clearance was performed. Verify at https://tmsearch.uspto.gov/ and applicable storefronts before launch.
+
+Scope: skills-only with packaged local Python scripts; no bundled server, app binding, credentials, subscription charge, or publisher telemetry. No MCP demo/reviewer credentials/cases required for skills-only per current submission guidance. Six review prompts included in manifest. For optional manual demonstration using synthetic fixtures, show import, date/repetition search, Japanese/Spanish/English matching, partial sync status, duplicate reimport and archive comparison. Do not show live user data. Tests ran locally, not in the production marketplace host.
+
+Before submission:
+- Choose verified individual or business publisher in developer portal; no personal email, identity or account details from the private edition appear in public source. Publisher name deliberately omitted until confirmation. Public listing may legally show verified publisher identity; use a verified business identity if desired.
+- Confirm supported countries (or select all available; manual Takeout availability varies). No fabricated country restrictions. Confirm no paid features at launch; this candidate has no purchase flow; third-party costs may apply. Verify commerce declaration in dashboard.
+- Deploy four draft pages on a domain controlled by the publisher. Edit missing publisher/support contact and review legal terms/actual privacy practices. Publish public HTTPS website, support, privacy and terms pages, verify access/content and add exact URLs to interface.websiteURL, supportURL, privacyPolicyURL, termsOfServiceURL. Current manifest leaves these absent rather than inventing URLs. Site templates in `site/` are drafts, no claims of live hosting.
+- If automated direct Google connection is required for launch, do not submit this as an OAuth app. Complete Google verification and implementation first. Current skills-only edition relies on user exports and optional compatible host connector; no required private app binding.
+- Open https://developers.openai.com/plugins/deploy/submission and follow submission portal link; choose Skills only. Verify target runtime policy for packaged local scripts (desktop-only may be needed if local execution becomes a requirement, see https://developers.openai.com/plugins/deploy/desktop-only). This version can guide/manual analyze authorized files on compatible hosts without local execution, but local semantic engine requires runtime. Do not misrepresent mobile behavior.
+- Upload final ZIP after missing metadata is filled; verify listing and translations, run scans, complete publisher/domain verification and developer attestations. Submit for review and publish only after approval. No portal action has been taken.
+- Source guidelines: https://developers.openai.com/plugins/plugin-guidelines ; package https://developers.openai.com/plugins/build/plugins ; submission https://developers.openai.com/plugins/deploy/submission ; Google Takeout https://support.google.com/accounts/answer/3024190.
+
+- Confirm rights to license the original software under AGPL-3.0-only and required notices. Publish corresponding source without access fees and link to it from the listing/support site as applicable; do not impose terms inconsistent with AGPL. Verify marketplace compatibility before release.
+
+### v1.0.1
+36 synthetic tests passed. External model manifest gate and safe loading flags tested without actual weights. No bundled model weights, credentials or third-party binary dependencies. Public publisher, live URLs, portal scans and attestations remain pending.

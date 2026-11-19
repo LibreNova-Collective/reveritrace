@@ -1,0 +1,7 @@
+# Release staging – LibreNova Collective
+
+This repository is a staging copy of ReveriTrace 1.0.1, licensed AGPL-3.0-only. The author label in the initial local commit is a project label, with a deliberately non-routable `.invalid` email. It does not claim an independently verified developer identity. When pushing, GitHub can associate the action with the authenticated account and public activity; a private organization membership does not guarantee anonymous publication. Keep the repository private until the publisher has reviewed this association risk, verified the public publisher identity, and approved the privacy/terms/support arrangement. Never commit an actual history export, local database, tokens, cookies, account identifiers, or private publisher configuration.
+
+The site remains a preview until the documented approved-config procedure is completed. Do not publish preview policies as effective policies. The source code and license must remain available. The public edition requires a user's own authorized archive; public OAuth and background synchronization are not implemented. Do not enable paid services.
+
+To inspect the staging bundle locally: `git clone -b main ReveriTrace-1.0.1-staging.bundle reveritrace`. The user may inspect `git log --format=fuller` and `git ls-tree -r HEAD`. To push after access and authorization are confirmed, use the organization's actual repository URL and a supported secure authentication method; never place tokens in shell commands or source. See README.md for further release requirements.

@@ -1,0 +1,41 @@
+test_accent_typo (test_history.HistoryTests.test_accent_typo) ... ok
+test_auto_import_folder (test_history.HistoryTests.test_auto_import_folder) ... ok
+test_corrupt_retry (test_history.HistoryTests.test_corrupt_retry) ... ok
+test_dates_expansion (test_history.HistoryTests.test_dates_expansion) ... ok
+test_japanese_normalization (test_history.HistoryTests.test_japanese_normalization) ... ok
+test_semantic_cross_language (test_history.HistoryTests.test_semantic_cross_language) ... ok
+test_semantic_search (test_history.HistoryTests.test_semantic_search) ... ok
+test_startup_persisted_folder (test_history.HistoryTests.test_startup_persisted_folder) ... ok
+test_zip_scope_and_repeat (test_history.HistoryTests.test_zip_scope_and_repeat) ... ok
+test_bad_url_no_rows (test_incremental.IncrementalTests.test_bad_url_no_rows) ... ok
+test_idempotent (test_incremental.IncrementalTests.test_idempotent) ... ok
+test_no_skipping_gap (test_incremental.IncrementalTests.test_no_skipping_gap) ... ok
+test_partial_no_cursor (test_incremental.IncrementalTests.test_partial_no_cursor) ... ok
+test_wrong_account (test_incremental.IncrementalTests.test_wrong_account) ... ok
+test_custom_module (test_model_policy.ModelPolicyTests.test_custom_module) ... ok
+test_dynamic_code (test_model_policy.ModelPolicyTests.test_dynamic_code) ... ok
+test_loader_flags_mock (test_model_policy.ModelPolicyTests.test_loader_flags_mock) ... ok
+test_missing_manifest_before_import (test_model_policy.ModelPolicyTests.test_missing_manifest_before_import) ... ok
+test_missing_review (test_model_policy.ModelPolicyTests.test_missing_review) ... ok
+test_modified_weight (test_model_policy.ModelPolicyTests.test_modified_weight) ... ok
+test_no_weights (test_model_policy.ModelPolicyTests.test_no_weights) ... ok
+test_noncommercial_rejected (test_model_policy.ModelPolicyTests.test_noncommercial_rejected) ... ok
+test_partial_quality_persists (test_model_policy.ModelPolicyTests.test_partial_quality_persists) ... ok
+test_path_escape (test_model_policy.ModelPolicyTests.test_path_escape) ... ok
+test_pickle_rejected (test_model_policy.ModelPolicyTests.test_pickle_rejected) ... ok
+test_symlink (test_model_policy.ModelPolicyTests.test_symlink) ... ok
+test_valid_manifest (test_model_policy.ModelPolicyTests.test_valid_manifest) ... ok
+test_missing (test_rotation.RotationTest.test_missing) ... ok
+test_same_file (test_rotation.RotationTest.test_same_file) ... ok
+test_superset (test_rotation.RotationTest.test_superset) ... ok
+test_unrelated (test_rotation.RotationTest.test_unrelated) ... ok
+test_canonical_video_link (test_security.SecurityTests.test_canonical_video_link) ... ok
+test_no_traversal_members (test_security.SecurityTests.test_no_traversal_members) ... ok
+test_reject_invalid_import (test_security.SecurityTests.test_reject_invalid_import) ... ok
+test_search_url_not_exposed (test_security.SecurityTests.test_search_url_not_exposed) ... ok
+test_untrusted_links (test_security.SecurityTests.test_untrusted_links) ... ok
+
+----------------------------------------------------------------------
+Ran 36 tests in 2.043s
+
+OK

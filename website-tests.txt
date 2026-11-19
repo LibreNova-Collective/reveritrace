@@ -1,0 +1,14 @@
+test_pages_and_links (test_site.Site.test_pages_and_links) ... ok
+test_source_and_license (test_site.Site.test_source_and_license) ... ok
+test_unapproved_release_refused (test_site.Site.test_unapproved_release_refused) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.029s
+
+OK
+{
+  "preview": true,
+  "plugin_sha256": "8f1e81b534ccfd396c09da7c0d1f8598139353c706d9573e83b9cb37a8c875f9",
+  "source_sha256": "92ce365e88ff269412237eec6140e2ecb5d48316c02390ab2eecb8b49440408a",
+  "url_verification": "not performed; verify deployed public pages before submission"
+}
